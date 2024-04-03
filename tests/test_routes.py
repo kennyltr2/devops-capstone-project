@@ -143,7 +143,7 @@ class TestAccountService(TestCase):
         accounts = self._create_accounts(5)
         account = accounts[0]
         account.id = 0
-        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
+        response = self.client.get(f"{BASE_URL}/{account.id}")
         data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -186,11 +186,11 @@ class TestAccountService(TestCase):
     def test_delete_account(self):
         """It should delete an account"""
         account = self._create_accounts(5)[0]
-        response = self.client.delete(f"{BASE_URL}/{account.id}", content_type="application/json")
+        response = self.client.delete(f"{BASE_URL}/{account.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         
         #Check if only 1 of 5 deleted
-        response = self.client.get(BASE_URL, content_type="application/json")
+        response = self.client.get(BASE_URL)
         data = response.get_json()
         print(data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -203,7 +203,7 @@ class TestAccountService(TestCase):
         response = self.client.put(f"{BASE_URL}", json=account.serialize())
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         #DELETE on BASE_URL
-        response = self.client.delete(f"{BASE_URL}", content_type="application/json")
+        response = self.client.delete(f"{BASE_URL}")
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         #POST on BASE_URL/<account_id>
         account = AccountFactory()
