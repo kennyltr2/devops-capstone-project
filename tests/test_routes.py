@@ -195,3 +195,21 @@ class TestAccountService(TestCase):
         print(data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 4)
+
+    def test_error_handler(self):
+        """Error handler should return method not allowed when an invalid request is made on an endpoint"""
+        account = self._create_accounts(1)[0]
+        #PUT on BASE_URL
+        response = self.client.put(f"{BASE_URL}", json=account.serialize())
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        #DELETE on BASE_URL
+        response = self.client.delete(f"{BASE_URL}", content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        #POST on BASE_URL/<account_id>
+        account = AccountFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{account.id}",
+            json=account.serialize(),
+            content_type="application/json"
+        )        
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
