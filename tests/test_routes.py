@@ -170,6 +170,7 @@ class TestAccountService(TestCase):
         account.email = account2.email
         response = self.client.put(f"{BASE_URL}/{account.id}", json=account.serialize())
         data = response.get_json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data["name"], account.name)
         self.assertEqual(data["address"], account.address)
         self.assertEqual(data["email"], account.email)
@@ -180,5 +181,17 @@ class TestAccountService(TestCase):
         accounts = self._create_accounts(5)
         account = accounts[0]
         response = self.client.put(f"{BASE_URL}/{0}", json=account.serialize())
-        data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_account(self):
+        """It should delete an account"""
+        account = self._create_accounts(5)[0]
+        response = self.client.delete(f"{BASE_URL}/{account.id}", content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        #Check if only 1 of 5 deleted
+        response = self.client.get(BASE_URL, content_type="application/json")
+        data = response.get_json()
+        print(data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 4)
