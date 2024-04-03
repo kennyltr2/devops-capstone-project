@@ -128,7 +128,7 @@ class TestAccountService(TestCase):
         """It should read an Account"""
         accounts = self._create_accounts(5)
         account = accounts[0]
-        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
+        response = self.client.get(f"{BASE_URL}/{account.id}")
         data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data['id'], account.id)
@@ -150,14 +150,14 @@ class TestAccountService(TestCase):
     def test_list_all_account(self):
         """It should list all Accounts"""
         accounts = self._create_accounts(5)
-        response = self.client.get(BASE_URL, content_type="application/json")
+        response = self.client.get(BASE_URL)
         data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 5)
 
     def test_list_no_account(self):
         """It should list return empty list and 200 if no accounts"""
-        response = self.client.get(BASE_URL, content_type="application/json")
+        response = self.client.get(BASE_URL)
         data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 0)
