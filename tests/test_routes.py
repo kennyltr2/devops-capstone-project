@@ -24,6 +24,7 @@ HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
+
 class TestAccountService(TestCase):
     """Account Service Tests"""
 
@@ -146,12 +147,11 @@ class TestAccountService(TestCase):
         account = accounts[0]
         account.id = 0
         response = self.client.get(f"{BASE_URL}/{account.id}")
-        data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_list_all_account(self):
         """It should list all Accounts"""
-        accounts = self._create_accounts(5)
+        self._create_accounts(5)
         response = self.client.get(BASE_URL)
         data = response.get_json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -190,8 +190,8 @@ class TestAccountService(TestCase):
         account = self._create_accounts(5)[0]
         response = self.client.delete(f"{BASE_URL}/{account.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        
-        #Check if only 1 of 5 deleted
+
+        # Check if only 1 of 5 deleted
         response = self.client.get(BASE_URL)
         data = response.get_json()
         print(data)
@@ -201,19 +201,19 @@ class TestAccountService(TestCase):
     def test_error_handler(self):
         """Error handler should return method not allowed when an invalid request is made on an endpoint"""
         account = self._create_accounts(1)[0]
-        #PUT on BASE_URL
+        # PUT on BASE_URL
         response = self.client.put(f"{BASE_URL}", json=account.serialize())
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        #DELETE on BASE_URL
+        # DELETE on BASE_URL
         response = self.client.delete(f"{BASE_URL}")
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        #POST on BASE_URL/<account_id>
+        # POST on BASE_URL/<account_id>
         account = AccountFactory()
         response = self.client.post(
             f"{BASE_URL}/{account.id}",
             json=account.serialize(),
             content_type="application/json"
-        )        
+        )
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_security_headers(self):
